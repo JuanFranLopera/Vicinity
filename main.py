@@ -17,3 +17,7 @@ if __name__ == '__main__':
 # New branch added with line here
 
 a = 1 + 1
+
+b = 2 + 2
+
+c = 3 + 3
