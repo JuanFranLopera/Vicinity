@@ -1,6 +1,6 @@
 
 
-## Copyright (C) GNSS ACADEMY 2020
+
 ##
 ## Name          : .py
 ## Purpose       : Receiver Sensor Analyses 
