@@ -9,7 +9,7 @@ GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
                           # Broadcom SOC channel names.
 
 GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
-pwm = GPIO.PWM(12, 100)   # Initialize PWM on pwmPin 100Hz frequency
+pwm = GPIO.PWM(12, 2000)   # Initialize PWM on pwmPin 100Hz frequency
 
 # main loop of program
 print("\nPress Ctl C to quit \n")  # Print blank line before and after message.
@@ -18,14 +18,11 @@ pwm.start(dc)                      # Start PWM with 0% duty cycle
 
 try:
   while True:                      # Loop until Ctl C is pressed to stop.
-    for dc in range(10, 101, 10):    # Loop 0 to 100 stepping dc by 10 each loop
+    for dc in range(56, 70, 1):    # Loop 9 to 99 stepping dc by 5 each loop
       pwm.ChangeDutyCycle(dc)
-      time.sleep(10)             # wait 10 seconds at current DC%
       print(dc)
-    for dc in range(101, 0, -10):    # Loop 100 to 0 stepping dc down by 10 each loop
-      pwm.ChangeDutyCycle(dc)
-      time.sleep(10)             # wait 10 seconds at current DC%
-      print(dc)
+      time.sleep(5)             # wait 5 seconds at current DC%
+
 except KeyboardInterrupt:
   print("Ctl C pressed - ending program")
 
