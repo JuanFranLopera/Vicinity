@@ -13,7 +13,20 @@ controlled_system = sensor.gyro                         # sets the gyro output t
 
 w = controlled_system.update(0)
 
+def write_to_csv():
+    
+    with open('/home/pi/Desktop/VICINITY/data-prueba.csv', mode='w') as sensor_readings:
+        writer = csv.DictWriter(sensor_readings, fieldnames = ["Number", "Date", "Time", "CPU Temperature", "Green", "Red", "Blue", "Temperature"])
+        writer.writeheader()
+        i=0
+        for i in range(10):
+            sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            write_to_log = sensor_write.writerow([(i+1), date_now(),time_now(), cpu_temperature(), light_sensor1(),light_sensor2(),light_sensor3(),avg_temperature_camera()])
+            time.sleep(2)
+    
+    return(write_to_log)
 
+write_to_csv()
 
 
 
