@@ -18,9 +18,7 @@ GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
                           # Broadcom SOC channel names.
 GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
 pwm = GPIO.PWM(12, 2000)   # Initialize PWM on pwmPin 100Hz frequency
-with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
-        writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
-        writer.writeheader()
+
 
 # main loop of program
 print("\nPress Ctl C to quit \n")  # Print blank line before and after message.
@@ -47,11 +45,18 @@ def gyro_now():
     gyro_now = str(gyro_now)
     return(gyro_now)
 
+
+#    with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
+#        writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
+#        writer.writeheader()
+        
+#        sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+#    write_to_log = sensor_write.writerow([date_now(),time_now(), gyro_speed_now(), gyro_now(), dc])
+#    time.sleep(2)
+    
+
 while True:
     if sensor.gyro < 0.0279:        #Desired rotation speed
         dc += 1                     #simple control 
         pwm.ChangeDutyCycle(dc)
-    sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    write_to_log = sensor_write.writerow([date_now(),time_now(), gyro_speed_now(), gyro_now(), dc])
-    time.sleep(2)
-    
+        
