@@ -20,9 +20,9 @@ GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
 pwm = GPIO.PWM(12, 2000)   # Initialize PWM on pwmPin 100Hz frequency
 
 
-    with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
-        writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
-        writer.writeheader()
+with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
+    writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
+    writer.writeheader()
         
 
 # main loop of program
