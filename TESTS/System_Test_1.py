@@ -9,15 +9,21 @@ try:
     from smbus2 import SMBus
 except ImportError:
     from smbus import SMBus
-
+import adafruit_mlx90640
 
 i2c = board.I2C()
 sensor = adafruit_bno055.BNO055_I2C(i2c)
-#GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
+GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
                           # Can use GPIO.setmode(GPIO.BCM) instead to use 
                           # Broadcom SOC channel names.
 GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
 pwm = GPIO.PWM(12, 2000)   # Initialize PWM on pwmPin 100Hz frequency
+
+
+# main loop of program
+print("\nPress Ctl C to quit \n")  # Print blank line before and after message.
+dc=56                              # set dc variable to 0 for 0%
+pwm.start(dc)                      # Start PWM with 0% duty cycle
 
 def time_now():
     now = datetime.datetime.now().strftime("%H:%M:%S")
@@ -39,25 +45,18 @@ def gyro_now():
     gyro_now = str(gyro_now)
     return(gyro_now)
 
-print("active, waiting 30 s ...")
-time.sleep(5)
-dc=84                              # set dc variable to 0 for 0%
-pwm.start(dc)   
+
+#    with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
+#        writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
+#        writer.writeheader()
+        
+#        sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+#    write_to_log = sensor_write.writerow([date_now(),time_now(), gyro_speed_now(), gyro_now(), dc])
+#    time.sleep(2)
+    
+
 while True:
-    if np.linalg.norm(sensor.gyro) < 0.0279:        #Desired rotation speed
+    if sensor.gyro < 0.0279:        #Desired rotation speed
         dc += 1                     #simple control 
         pwm.ChangeDutyCycle(dc)
-    fb = open('/home/pi/Documents/MISSION/data.csv','a')
-    fb.write('%s %s %s %s %s \n' % (date_now(),time_now(), gyro_speed_now(), gyro_now(), dc))
-    fb.close()
-
-#     with open('/home/pi/Documents/MISSION/data.csv', mode='w') as sensor_readings:
-#         writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
-#         writer.writeheader()
-#         sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#         write_to_log = sensor_write.writerow([date_now(),time_now(), gyro_speed_now(), gyro_now(), dc])
-    print(dc)
-    print(np.linalg.norm(sensor.gyro))
-    print(str(sensor.euler))
-    time.sleep(2)
-    
+        
