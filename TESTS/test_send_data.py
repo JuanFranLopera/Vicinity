@@ -1,12 +1,21 @@
 import paramiko
 import os
+from datetime import datetime
 
-ground_dir = '/home/pi/Documents/GroundControl/data'
+# Useful directories
+home_dir = os.path.expanduser('~')
+ground_dir = os.path.join(home_dir,'Documents','Vicinity','GROUND')
+log_dir = os.path.join(ground_dir,'DATA','log')
+
+if not os.path.exists(log_dir):
+    os.mkdir(log_dir)
 
 
-
-#Save all paramiko activity
-paramiko.util.log_to_file('paramiko.log')
+#Save all paramiko activity in a log file
+curr_time = datetime.today().strftime('%Y%m%d_%H%M%S')
+log_name = 'log_paramiko_' + curr_time + '.log'
+log_file = os.path.join(log_dir,log_name)
+paramiko.util.log_to_file(log_file)
 
 # Start an SSH client
 ssh_client = paramiko.SSHClient()
