@@ -8,8 +8,11 @@ home_dir = os.path.expanduser('~')
 ground_dir = os.path.join(home_dir,'Documents','Vicinity','GROUND')
 
 cfg_dir = os.path.join(ground_dir,'DATA','CFG')
+input_dir = os.path.join(ground_dir,'DATA','Input')
 log_dir = os.path.join(ground_dir,'DATA','log')
 
+if not os.path.exists(input_dir):
+    os.mkdir(input_dir)
 if not os.path.exists(log_dir):
     os.mkdir(log_dir)
 
@@ -39,16 +42,17 @@ ssh_client.connect(**net_cfg)
 # Open SFTPClient object
 sftp = ssh_client.open_sftp()
 
-#Go to data directory
+# Go to data directory
 directory = '/home/pi/Documents/Vicinity'
 sftp.chdir(directory)
 files = sftp.listdir()
 
-
+# File transmission
 for file in files:
     if '.csv' in file:
         remote_file = os.path.join(directory,file)
-        sftp.get(remote_file, os.path.join(ground_dir,file))
+        sftp.get(remote_file, os.path.join(input_dir,file))
 
+# Close SSH Connection
 sftp.close()
 ssh_client.close()
