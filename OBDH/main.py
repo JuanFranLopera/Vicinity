@@ -19,3 +19,5 @@ shall consist of a while loop which
     - shall call control() from control.py
     - shall call sun_sensor() from control.py
 """
+from data_acquisition import imu
+import time
