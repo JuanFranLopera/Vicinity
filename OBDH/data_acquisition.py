@@ -18,23 +18,26 @@ shall contain the following functions
 import time
 import board
 import adafruit_bno055
+import adafruit_tca9548a    # multiplexer library
 import csv
 import datetime
 import numpy as np
  
-i2c = board.I2C()
-sensor = adafruit_bno055.BNO055_I2C(i2c)
+i2c = board.I2C() # setup I2C
+tca = adafruit_tca9548a.TCA9548A(i2c) # begin MLX90640 with I2C comm
+sensor = adafruit_bno055.BNO055_I2C(tca[6]) #I2C comm with IMU (channel 6)
 
 def date_now():
     today = datetime.datetime.now().strftime("%Y-%m-%d")                    #produce date in dd/mm/yyyy
     today = str(today)                                                      #convert to string
-    return(today)
+    return today 
 
 def time_now():
     now = datetime.datetime.now().strftime("%H:%M:%S")                      #produce time in hh:mm:ss
     now = str(now)                                                          #convert to string
-    return(now)
+    return now
 
 def imu():
     imu_out = [[sensor.euler], [sensor.gyro], [sensor.acceleration]]        #sets up the IMU sensor output matrix
-    return(imu_out)
+    return imu_out
+

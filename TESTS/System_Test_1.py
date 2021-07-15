@@ -1,4 +1,3 @@
-#import RPi.GPIO as GPIO   # Import the GPIO library.
 import time               # Import time library
 import board
 import pwmio
@@ -7,9 +6,11 @@ import adafruit_tca9548a
 import csv
 import datetime
 import numpy as np
+
 #import smbus
 #bus = smbus.SMBus(1)
 #bus.write_byte_data(0x28, 0x0A, 0b00000100)
+
 i2c = board.I2C() # setup I2C
 tca = adafruit_tca9548a.TCA9548A(i2c) # begin MLX90640 with I2C comm
 sensor = adafruit_bno055.BNO055_I2C(tca[6]) #I2C comm with IMU (channel 1)
@@ -56,7 +57,7 @@ while True:
         print(dc)
     if dc <5:
         dc = 5
-    pwm.duty_cycle = (dc/100) * (2 ** 16) # dc between 0.0 and 1.0 where 0.0 = 0.0% and 1.0 = 100.0
+    pwm.duty_cycle = (dc/100) * (2 ** 16)   # dc between 0.0 and 1.0 where 0.0 = 0.0% and 1.0 = 100.0
                                             #Can be controlled in decimal in full 16 bit. 
     fb = open('/home/pi/Documents/MISSION/data_test_8.csv','a')
     fb.write('%s %s %s %s %s \n' % (date_now(),time_now(),sensor.euler, sensor.gyro, dc))
