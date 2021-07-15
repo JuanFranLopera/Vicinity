@@ -1,29 +1,20 @@
-import RPi.GPIO as GPIO   # Import the GPIO library.
+#import RPi.GPIO as GPIO   # Import the GPIO library.
 import time               # Import time library
 import board
+import pwmio
 import adafruit_bno055
+import adafruit_tca9548a
 import csv
 import datetime
 import numpy as np
-try:
-    from smbus2 import SMBus
-except ImportError:
-    from smbus import SMBus
-import adafruit_mlx90640
-
-i2c = board.I2C()
-sensor = adafruit_bno055.BNO055_I2C(i2c)
-GPIO.setmode(GPIO.BOARD)  # Set Pi to use pin number when referencing GPIO pins.
-                          # Can use GPIO.setmode(GPIO.BCM) instead to use 
-                          # Broadcom SOC channel names.
-GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
-pwm = GPIO.PWM(12, 2000)   # Initialize PWM on pwmPin 100Hz frequency
-
-
-# main loop of program
-print("\nPress Ctl C to quit \n")  # Print blank line before and after message.
-dc=56                              # set dc variable to 0 for 0%
-pwm.start(dc)                      # Start PWM with 0% duty cycle
+#import smbus
+#bus = smbus.SMBus(1)
+#bus.write_byte_data(0x28, 0x0A, 0b00000100)
+i2c = board.I2C() # setup I2C
+tca = adafruit_tca9548a.TCA9548A(i2c) # begin MLX90640 with I2C comm
+sensor = adafruit_bno055.BNO055_I2C(tca[6]) #I2C comm with IMU (channel 1)
+pwm= pwmio.PWMOut(board.D18, frequency = 50, duty_cycle = 0) #setting the pwm on GPIO pin 18 physical pin 12
+                                                              #frequency set to 50hz, duty cycle set to 0   
 
 def time_now():
     now = datetime.datetime.now().strftime("%H:%M:%S")
@@ -45,18 +36,33 @@ def gyro_now():
     gyro_now = str(gyro_now)
     return(gyro_now)
 
-
-#    with open('/home/pi/Documents/VICINITY/.csv', mode='w') as sensor_readings:
-#        writer = csv.DictWriter(sensor_readings, fieldnames = ["Date", "Time", "Angular Speed", "Angular Velocity", "Duty Cycle %" ])
-#        writer.writeheader()
-        
-#        sensor_write = csv.writer(sensor_readings, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#    write_to_log = sensor_write.writerow([date_now(),time_now(), gyro_speed_now(), gyro_now(), dc])
-#    time.sleep(2)
-    
-
+print("active, waiting 30 s ...")
+#time.sleep(5)
+dc=4.4# set dc variable to 0 for 0%
+print(dc)
+pwm.duty_cycle = (dc/100) * (2 ** 16)
+t = 0
+time.sleep(40)
+dc=4.5# set dc variable to 0 for 0%
+print(dc)
+pwm.duty_cycle = (dc/100) * (2 ** 16)
+target_speed = -0.025
+K_p = 0.25
 while True:
-    if sensor.gyro < 0.0279:        #Desired rotation speed
-        dc += 1                     #simple control 
-        pwm.ChangeDutyCycle(dc)
-        
+    if t == 4:
+        err = sensor.gyro[1] - target_speed
+        dc += K_p*err  #simple control
+        t=0
+        print(dc)
+    if dc <5:
+        dc = 5
+    pwm.duty_cycle = (dc/100) * (2 ** 16) # dc between 0.0 and 1.0 where 0.0 = 0.0% and 1.0 = 100.0
+                                            #Can be controlled in decimal in full 16 bit. 
+    fb = open('/home/pi/Documents/MISSION/data_test_8.csv','a')
+    fb.write('%s %s %s %s %s \n' % (date_now(),time_now(),sensor.euler, sensor.gyro, dc))
+    fb.close()
+    print(sensor.gyro[1])
+
+    t+= 1
+    time.sleep(0.25)
+    
