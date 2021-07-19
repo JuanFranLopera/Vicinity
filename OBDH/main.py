@@ -29,20 +29,20 @@ import datetime
 import numpy as np
 from control import *
 from data_acquisition import *
+
 """
 Initialisation
 """
+
 i2c = board.I2C() # setup I2C
 tca = adafruit_tca9548a.TCA9548A(i2c) # begin MLX90640 with I2C comm
 sensor = adafruit_bno055.BNO055_I2C(tca[6]) #I2C comm with IMU (channel 6)
 pwm= pwmio.PWMOut(board.D18, frequency = 50, duty_cycle = 0) #setting the pwm on GPIO pin 18 physical pin 12
 dc = 4.4 # sets duty cycle to the threshold duty cycle for the ESC
-target_speed = -0.025 # rad s^-1
-up_bound = -0.0279
-low_bound = -0.022
-K_p = 0.1
-K_p1 = 0.1
-K_p2 = 0.1
+target_speed = -5*np.pi/180 # rad s^-1
+up_bound = target_speed*1.1 #-0.0279
+low_bound = target_speed*0.9 #-0.022
+K_p = 0.01
 min_dc = 4.5
 max_dc = 12
 err_speed = 0
@@ -53,6 +53,7 @@ t =0
 """
 Operations
 """
+
 while True:
     ### PAYLOAD SECTION ###
 
@@ -61,11 +62,10 @@ while True:
     ### CONTROL SECTION ###
     if t == 2:
         dc, err_speed = control_speed(sensor.gyro[1], target_speed, K_p, low_bound, up_bound, min_dc,max_dc, dc, err_speed)  # fetches the new dc from control
-        #dc = control_pos(0, sensor.euler[0], sensor.gyro[1], min_dc, max_dc, dc, K_p1, K_p2)
         pwm.duty_cycle = (dc/100) * (2 ** 16)   # sets the PWM to the new dc
         t = 0
     t +=1
-    fb = open('/home/pi/Documents/MISSION/pd_test_4.csv','a')
+    fb = open('/home/pi/Documents/MISSION/5dps.csv','a')
     fb.write('%s %s %s %s %s\n' % (date_now(),time_now(),imu(), dc, err_speed))
     fb.close()
     time.sleep(1) #get rid of this sleep for final code and only have 1

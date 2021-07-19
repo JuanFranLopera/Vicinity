@@ -22,7 +22,10 @@ def control_speed(speed, target_speed, K_p, low_bound, up_bound, min_dc, max_dc,
     dc = current dc
     """
     err = speed - target_speed      # the error in the speed of the satellite.
-    dc += K_p*err #simple control
+    if speed <= up_bound and speed >= low_bound:
+        pass
+    else:
+        dc += K_p*err #simple control
     if dc < min_dc:
         dc = min_dc
     if dc > max_dc:

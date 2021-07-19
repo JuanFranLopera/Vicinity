@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv (r'/Users/jack/Documents/Cranfield/SDC/4.5_0.05_2/KP_test_05_2_proc.csv')
+df = pd.read_csv (r'/Users/jack/Documents/Cranfield/SDC/Maria/maria_tests_input_stepped2_proc.csv')
 #df1 = pd.read_csv (r'/Users/jack/Documents/Cranfield/SDC/test_2/data_test_2_proccessed.csv')
 ##df2 = pd.read_csv (r'/Users/jack/Documents/Cranfield/SDC/linear tests/linear_accel_2s_proc.csv')
 #df3 = pd.read_csv (r'/Users/jack/Documents/Cranfield/SDC/4.5_0.8/KP_test_80_proc.csv')
