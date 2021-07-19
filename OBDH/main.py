@@ -26,6 +26,7 @@ import adafruit_bno055      # IMU library
 import adafruit_tca9548a    # multiplexer library
 import csv                  # library for writing to .csv
 import datetime
+import adafruit_mlx90640
 import numpy as np
 from control import *
 from data_acquisition import *
@@ -34,10 +35,25 @@ from Test_MLX90640_MUX_I2C_Manfred import *
 """
 Initialisation
 """
+# Multiplexer Setup
+mux_address = 0x70
+isl29125_address = 0x44
+isl29125_top_channel = 7
+isl29125_mid_channel = 3
+isl29125_bottom_channel = 2
 
+# I2C Setup
 i2c = board.I2C() # setup I2C
 tca = adafruit_tca9548a.TCA9548A(i2c) # begin MLX90640 with I2C comm
+
+#  Thermal Camera  setup
+tsl6 = adafruit_mlx90640.MLX90640(tca[4]) #I2C comm with thermal camera (channel 4)
+tsl6.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_8_HZ # set refresh rate
+frame = [0] * 768 # setup array for storing all 768 temperatures
+
+#  IMU Setup
 sensor = adafruit_bno055.BNO055_I2C(tca[6]) #I2C comm with IMU (channel 6)
+
 pwm= pwmio.PWMOut(board.D18, frequency = 50, duty_cycle = 0) #setting the pwm on GPIO pin 18 physical pin 12
 dc = 4.4 # sets duty cycle to the threshold duty cycle for the ESC
 target_speed = -5*np.pi/180 # rad s^-1
@@ -60,11 +76,6 @@ while True:
 
     f = open("Thermal.csv", "a")
     np.savetxt(f,thermal(), fmt="%1.1f",delimiter=",")
-    f.write("\n")
-    f.close()
-
-    f = open("Light.csv", "a")
-    np.savetxt(f,light, fmt="%1.1f",delimiter=",")
     f.write("\n")
     f.close()
 

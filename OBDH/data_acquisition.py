@@ -19,6 +19,11 @@ import time
 import board
 import adafruit_bno055
 import adafruit_tca9548a    # multiplexer library
+import adafruit_tca9548a
+import adafruit_mlx90640    # Thermal Camera library
+import numpy as np          # Numpy  for temperatures  array
+import smbus
+
 import csv
 import datetime
 import numpy as np
