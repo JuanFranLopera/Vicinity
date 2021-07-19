@@ -5,7 +5,7 @@ shall be started by telecommands.py
 shall be stopped by telecommands.py
 shall contain Initialisation commands
 shall consist of a while loop which
-    - adds a row to a .csv with the current data readings by  
+    - adds a row to a .csv with the current data readings by
         - calling the data acquisition functions:
             - index()
             - date()
@@ -20,15 +20,16 @@ shall consist of a while loop which
     - shall call sun_sensor() from control.py
 """
 import time                 # Import time library
-import board                # main library for controlling pins 
-import pwmio                # PWM library 
-import adafruit_bno055      # IMU library 
+import board                # main library for controlling pins
+import pwmio                # PWM library
+import adafruit_bno055      # IMU library
 import adafruit_tca9548a    # multiplexer library
 import csv                  # library for writing to .csv
-import datetime             
+import datetime
 import numpy as np
 from control import *
 from data_acquisition import *
+from Test_MLX90640_MUX_I2C_Manfred import *
 
 """
 Initialisation
@@ -46,7 +47,7 @@ K_p = 0.01
 min_dc = 4.5
 max_dc = 12
 err_speed = 0
-pwm.duty_cycle = (dc/100) * (2 ** 16) # starts the PWM running for the ESC to recognise but will have no response until dc = 4.5 
+pwm.duty_cycle = (dc/100) * (2 ** 16) # starts the PWM running for the ESC to recognise but will have no response until dc = 4.5
 time.sleep(30) # needs some time to pass to initialise the PWM
 t =0
 
@@ -57,7 +58,15 @@ Operations
 while True:
     ### PAYLOAD SECTION ###
 
-    
+    f = open("Thermal.csv", "a")
+    np.savetxt(f,thermal(), fmt="%1.1f",delimiter=",")
+    f.write("\n")
+    f.close()
+
+    f = open("Light.csv", "a")
+    np.savetxt(f,light, fmt="%1.1f",delimiter=",")
+    f.write("\n")
+    f.close()
 
     ### CONTROL SECTION ###
     if t == 2:
@@ -69,10 +78,3 @@ while True:
     fb.write('%s %s %s %s %s\n' % (date_now(),time_now(),imu(), dc, err_speed))
     fb.close()
     time.sleep(1) #get rid of this sleep for final code and only have 1
-
-    
-
-    
-
-
-
